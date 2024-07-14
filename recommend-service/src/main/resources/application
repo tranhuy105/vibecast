@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: recommend-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/interaction_db
+    username: username
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: create
