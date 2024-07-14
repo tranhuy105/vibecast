@@ -9,6 +9,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,16 +17,34 @@ import java.io.File;
 @Service
 public class S3Service {
     private final AmazonS3 s3Client;
-    private final String bucketName = "vibecast";
-    private final String accessKey = "user";
-    private final String secretKey = "password";
+    @Value("${s3.bucket.name}")
+    private String bucketName;
+
+    @Value("${s3.access.key}")
+    private String accessKey;
+
+    @Value("${s3.secret.key}")
+    private String secretKey;
+
+    @Value("${s3.endpoint.url}")
+    private String serviceEndpoint;
+
+    @Value("${s3.region}")
+    private String region;
     private final Logger logger = LoggerFactory.getLogger(S3Service.class);
 
-    public S3Service() {
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
-                accessKey, secretKey);
+    public S3Service(@Value("${s3.access.key}") String accessKey,
+                     @Value("${s3.secret.key}") String secretKey,
+                     @Value("${s3.endpoint.url}") String serviceEndpoint,
+                     @Value("${s3.region}") String region) {
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.serviceEndpoint = serviceEndpoint;
+        this.region = region;
+
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
         this.s3Client = AmazonS3Client.builder()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:9000", "us-east-1"))
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(this.serviceEndpoint, this.region))
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .withPathStyleAccessEnabled(true)
                 .build();

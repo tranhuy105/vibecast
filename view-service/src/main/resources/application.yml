@@ -18,6 +18,42 @@ spring:
     multipart:
       max-file-size: 10MB
 
+s3:
+  bucket:
+    name: vibecast
+  access:
+    key: user
+  secret:
+    key: password
+  endpoint:
+    url: http://localhost:9000
+  region: us-east-1
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  health:
+    readiness-state:
+      enabled: true
+    liveness-state:
+      enabled: true
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      probes:
+        enabled: true
+  info:
+    env:
+      enabled: true
+
+endpoints:
+  shutdown:
+    enabled: true
+
+
 logging:
   level:
     org:

@@ -8,6 +8,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,18 +21,37 @@ import java.util.concurrent.TimeUnit;
 public class S3Service {
     private final RedisTemplate<String, Object> redisTemplate;
     private final AmazonS3 s3Client;
-    private final String bucketName = "vibecast";
-    private final String accessKey = "user";
-    private final String secretKey = "password";
+    @Value("${s3.bucket.name}")
+    private String bucketName;
+
+    @Value("${s3.access.key}")
+    private String accessKey;
+
+    @Value("${s3.secret.key}")
+    private String secretKey;
+
+    @Value("${s3.endpoint.url}")
+    private String serviceEndpoint;
+
+    @Value("${s3.region}")
+    private String region;
 
     private static final long URL_EXPIRATION_TIME_MILLIS = 1000 * 60 * 60; // 1 hour
     private static final long CACHE_EXPIRATION_BUFFER_MILLIS = 1000 * 60 * 5; // 5 minutes buffer
 
-    public S3Service(RedisTemplate<String, Object> redisTemplate) {
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(
-                accessKey, secretKey);
+    public S3Service(RedisTemplate<String, Object> redisTemplate,
+                     @Value("${s3.access.key}") String accessKey,
+                     @Value("${s3.secret.key}") String secretKey,
+                     @Value("${s3.endpoint.url}") String serviceEndpoint,
+                     @Value("${s3.region}") String region) {
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+        this.serviceEndpoint = serviceEndpoint;
+        this.region = region;
+
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
         this.s3Client = AmazonS3Client.builder()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:9000", "us-east-1"))
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(this.serviceEndpoint, this.region))
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .withPathStyleAccessEnabled(true)
                 .build();

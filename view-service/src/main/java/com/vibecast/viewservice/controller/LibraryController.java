@@ -19,7 +19,7 @@ public class LibraryController {
 
     @GetMapping("/test")
     public void test() {
-//        mockDataService.generateMockData();
+        mockDataService.generateMockData();
     }
 
     @GetMapping("/playlists")
