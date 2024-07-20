@@ -6,12 +6,14 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -58,10 +60,14 @@ public class S3Service {
         this.redisTemplate = redisTemplate;
     }
 
-    public String generatePresignedUrl(String trackId) {
+    public String generatePresignedUrl(String trackId) throws FileNotFoundException {
         String cachedUrl = (String) redisTemplate.opsForValue().get(trackId);
         if (cachedUrl != null) {
             return cachedUrl;
+        }
+
+        if (!doesObjectExist(trackId)) {
+            throw new FileNotFoundException("The specified key does not exist in the bucket.");
         }
 
         Date expiration = new Date();
@@ -79,5 +85,18 @@ public class S3Service {
         redisTemplate.opsForValue().set(trackId, url.toString(), cacheExpirationMillis, TimeUnit.MILLISECONDS);
 
         return url.toString();
+    }
+
+    private boolean doesObjectExist(String trackId) {
+        try {
+            s3Client.getObjectMetadata(bucketName, trackId);
+            return true;
+        } catch (AmazonS3Exception e) {
+            if (e.getStatusCode() == 404) {
+                return false;
+            } else {
+                throw e;
+            }
+        }
     }
 }

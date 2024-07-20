@@ -1,6 +1,7 @@
 package com.vibecast.streamservice.controller;
 
 import com.vibecast.streamservice.feign.ViewServiceClient;
+import com.vibecast.streamservice.feign.model.Track;
 import com.vibecast.streamservice.models.ListeningHistory;
 import com.vibecast.streamservice.models.PlaybackState;
 import com.vibecast.streamservice.models.PlaybackStateResponse;
@@ -11,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -36,7 +39,8 @@ public class PlayerController {
         }
         PlaybackStateResponse playbackStateResponse = new PlaybackStateResponse(
                 playbackState.isPlaying(),
-                viewServiceClient.getTrackById(playbackState.getCurrentTrackId()),
+                new Track(playbackState.getCurrentTrackId(), null, null, null, new ArrayList<>()),
+//                viewServiceClient.getTrackById(playbackState.getCurrentTrackId()),
                 playbackState.getPosition(),
                 playbackState.getAccumulatedTime(),
                 playbackState.getDeviceId()
@@ -57,10 +61,10 @@ public class PlayerController {
     }
 
     @PutMapping("/play")
-    public ResponseEntity<String> startPlayback(HttpServletRequest request, @RequestParam String trackId) {
+    public ResponseEntity<String> startPlayback(HttpServletRequest request, @RequestParam String trackId) throws FileNotFoundException {
         String deviceId = request.getHeader("User-Agent");
-        playerService.startOrChangeTrack(USER_ID, deviceId, trackId);
         String presignedUrl = s3Service.generatePresignedUrl(trackId);
+        playerService.startOrChangeTrack(USER_ID, deviceId, trackId);
         return ResponseEntity.ok(presignedUrl);
     }
 }
