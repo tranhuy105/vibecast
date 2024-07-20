@@ -140,7 +140,7 @@ public class PlayerService {
     }
 
     private void updateListeningHistory(String userId, PlaybackState playbackState) {
-        long listeningTime = calculateListeningTime(playbackState);
+        long listeningTime = playbackState.getAccumulatedTime() + calculateListeningTime(playbackState);
         saveListeningHistoryInRedis(userId, playbackState.getCurrentTrackId(), listeningTime);
         playbackState.setAccumulatedTime(0); // Reset accumulated time after saving history
     }
