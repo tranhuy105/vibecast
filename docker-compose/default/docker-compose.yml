@@ -56,6 +56,21 @@ services:
       file: common-config.yml
       service: network-deploy-service
 
+  eurekaserver:
+    image: "vibecast/eurekaserver"
+    container_name: eurekaserver
+    ports:
+      - "8070:8070"
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
   recommends:
     image: "vibecast/recommend-service"
     container_name: recommends-ms
@@ -69,7 +84,7 @@ services:
       start_period: 10s
     extends:
       file: common-config.yml
-      service: microservice-base-config
+      service:  microservice-eureka-config
 
   views:
     image: "vibecast/view-service"
@@ -96,7 +111,7 @@ services:
       S3_ENDPOINT_URL: http://s3:9000
     extends:
       file: common-config.yml
-      service: microservice-base-config
+      service:  microservice-eureka-config
     depends_on:
       redis:
         condition: service_healthy
@@ -123,12 +138,28 @@ services:
       S3_ENDPOINT_URL: http://s3:9000
     extends:
       file: common-config.yml
-      service: microservice-base-config
+      service:  microservice-eureka-config
     depends_on:
       redis:
         condition: service_healthy
       s3:
         condition: service_healthy
+
+  gateway:
+    image: "vibecast/gateway"
+    container_name: gateway
+    ports:
+      - "8072:8072"
+    depends_on:
+      recommends:
+        condition: service_healthy
+      streams:
+        condition: service_healthy
+      views:
+        condition: service_healthy
+    extends:
+      file: common-config.yml
+      service:  microservice-eureka-config
 
 networks:
   vibecast:
