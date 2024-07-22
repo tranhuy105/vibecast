@@ -18,42 +18,6 @@ import java.util.List;
 public class CustomPlaylistRepositoryImpl implements CustomPlaylistRepository {
     private final MongoTemplate mongoTemplate;
 
-//    @Override
-//    public PlaylistWithTracksResponseDto getPlaylistWithTrackDetails(String playlistId) {
-//        ObjectId objectId = new ObjectId(playlistId);
-//
-//        Aggregation aggregation = Aggregation.newAggregation(
-//                Aggregation.match(Criteria.where("_id").is(objectId)),
-//                Aggregation.unwind("tracks", true),
-//                Aggregation.addFields().addField("tracks.trackObjId").withValue(ConvertOperators.ToObjectId.toObjectId("$tracks.trackId")).build(),
-//                Aggregation.lookup("track", "tracks.trackObjId", "_id", "trackDetails"),
-//                Aggregation.unwind("trackDetails", true),
-//                Aggregation.project("_id", "name", "description", "owner", "isPublic", "isCollaborative")
-//                        .and("tracks.addedAt").as("trackAddedAt")
-//                        .and("tracks.addedBy").as("trackAddedBy")
-//                        .and("trackDetails").as("trackDetails")
-//                        .and("trackDetails.duration").as("trackDetail.duration")
-//                        .and("trackDetails._id").as("trackDetail._id")
-//                        .and("trackDetails.name").as("trackDetail.name")
-//                        .and("trackDetails.album").as("trackDetail.album")
-//                        .and("trackDetails.artists").as("trackDetail.artists"),
-//                Aggregation.group("$_id")
-//                        .first("name").as("name")
-//                        .first("description").as("description")
-//                        .first("owner").as("owner")
-//                        .first("isPublic").as("isPublic")
-//                        .first("isCollaborative").as("isCollaborative")
-//                        .push(new BasicDBObject()
-//                                .append("addedAt", "$trackAddedAt")
-//                                .append("addedBy", "$trackAddedBy")
-//                                .append("track", "$trackDetail")
-//                        ).as("tracks")
-//        );
-//
-//        AggregationResults<PlaylistWithTracksResponseDto> results = mongoTemplate.aggregate(aggregation, "playlist", PlaylistWithTracksResponseDto.class);
-//        return results.getUniqueMappedResult();
-//    }
-
     @Override
     public List<PlaylistSummary> findByOwnerUserIdWithTrackCount(String ownerId) {
         Aggregation aggregation = Aggregation.newAggregation(

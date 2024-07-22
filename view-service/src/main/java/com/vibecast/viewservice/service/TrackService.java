@@ -18,7 +18,6 @@ public class TrackService {
     private final AlbumRepository albumRepository;
     private final S3Service s3Service;
 
-    @Cacheable(value = "tracks", key = "#id")
     public Track getTrackById(String id) {
         return trackRepository.findById(id).orElseThrow();
     }

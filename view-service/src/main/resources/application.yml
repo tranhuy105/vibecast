@@ -1,4 +1,7 @@
 spring:
+  application:
+    name: views
+
   data:
     mongodb:
       auto-index-creation: true
@@ -53,6 +56,20 @@ endpoints:
   shutdown:
     enabled: true
 
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: "views"
+    description: "Vibecast Metadata Application"
+    version: "1.0.0"
 
 logging:
   level:

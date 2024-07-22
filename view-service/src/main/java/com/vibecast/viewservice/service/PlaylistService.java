@@ -28,7 +28,7 @@ public class PlaylistService {
     private final TrackRepository trackRepository;
     private final CacheService cacheService;
 
-    @Cacheable(value = "playlists", key = "#playlistId + '-' + #limit + '-' + #offset")
+//    @Cacheable(value = "playlists", key = "#playlistId + '-' + #limit + '-' + #offset")
     public PlaylistWithTracksResponseDto findPlaylistById(String playlistId, int limit, int offset) {
         PlaylistSummary playlistDetails = playlistRepository.findPlaylistByIdWithTotalTrackCount(playlistId);
         if (playlistDetails == null) {
