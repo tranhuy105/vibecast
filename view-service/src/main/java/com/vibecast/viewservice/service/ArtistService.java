@@ -22,17 +22,17 @@ public class ArtistService {
     }
 
 
-    @Cacheable(value = "artists", key = "#id")
+//    @Cacheable(value = "artists", key = "#id")
     public Artist getArtistById(String id) throws Exception {
         return artistRepository.findById(id).orElseThrow(() -> new Exception("Artist not found"));
     }
 
-    @Cacheable(value = "artistAlbums", key = "#id")
+//    @Cacheable(value = "artistAlbums", key = "#id")
     public List<Album> getAlbumsByArtistId(String id) {
         return albumRepository.findByArtistsId(id);
     }
 
-    @Cacheable(value = "artistTopTracks", key = "#id")
+//    @Cacheable(value = "artistTopTracks", key = "#id")
     public List<Object> getTopTracksByArtistId(String id) {
         return new ArrayList<>();
     }

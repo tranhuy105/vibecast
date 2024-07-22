@@ -25,7 +25,7 @@ public class AlbumService {
         return new PaginatedObjectDto<>(pageSize, page * pageSize, (int) albumPage.getTotalElements(), albumPage.getContent());
     }
 
-    @Cacheable(value = "albums", key = "#id")
+//    @Cacheable(value = "albums", key = "#id")
     public Album getAlbumById(String id) {
         return albumRepository.findById(id).orElseThrow();
     }

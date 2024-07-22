@@ -7,6 +7,8 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: create
+  application:
+    name: analyzes
 
 server:
   port: 8082
@@ -34,3 +36,18 @@ management:
 endpoints:
   shutdown:
     enabled: true
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
+
+info:
+  app:
+    name: "recommends"
+    description: "Vibecast Recommend Application"
+    version: "1.0.0"
