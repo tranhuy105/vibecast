@@ -39,7 +39,6 @@ public class PlayerController {
         }
         PlaybackStateResponse playbackStateResponse = new PlaybackStateResponse(
                 playbackState.isPlaying(),
-//                new Track(playbackState.getCurrentTrackId(), null, null, null, new ArrayList<>()),
                 viewServiceClient.getTrackById(playbackState.getCurrentTrackId()),
                 playbackState.getPosition(),
                 playbackState.getAccumulatedTime(),

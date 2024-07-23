@@ -9,10 +9,7 @@ import com.vibecast.viewservice.model.response.PlaylistWithTracksResponseDto;
 import com.vibecast.viewservice.repository.PlaylistRepository;
 import com.vibecast.viewservice.repository.TrackRepository;
 import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,8 +25,11 @@ public class PlaylistService {
     private final TrackRepository trackRepository;
     private final CacheService cacheService;
 
-//    @Cacheable(value = "playlists", key = "#playlistId + '-' + #limit + '-' + #offset")
-    public PlaylistWithTracksResponseDto findPlaylistById(String playlistId, int limit, int offset) {
+    @Cacheable(value = "playlist", key = "#playlistId + '::page:' + #page")
+    public PlaylistWithTracksResponseDto findPlaylistById(String playlistId, int page, int pageSize) {
+        int limit = pageSize;
+        int offset = (page-1)*pageSize;
+
         PlaylistSummary playlistDetails = playlistRepository.findPlaylistByIdWithTotalTrackCount(playlistId);
         if (playlistDetails == null) {
             throw new RuntimeException("Playlist not found");
@@ -52,12 +52,6 @@ public class PlaylistService {
 
     public List<PlaylistSummary> findByOwnerId(String ownerId) {
         return playlistRepository.findByOwnerUserIdWithTrackCount(ownerId);
-    }
-
-    public void reorderTracksInPlaylist(String playlistId,
-                                        Integer rangeStart,
-                                        Integer insertBefore,
-                                        Integer rangeLength) {
     }
 
     public void addTracksToPlaylist(String playlistId, List<String> trackIds) {
@@ -115,6 +109,6 @@ public class PlaylistService {
     }
 
     private void evictAllPlaylistCache(String playlistId) {
-        cacheService.evictCacheWithPlaylistId(playlistId);
+        cacheService.evictAllPlaylistCache(playlistId);
     }
 }

@@ -18,7 +18,6 @@ public class MockDataService {
     private final AlbumRepository albumRepository;
     private final ArtistRepository artistRepository;
     private final TrackRepository trackRepository;
-    private final UserCollectionRepository userCollectionRepository;
 
     private final Faker faker = new Faker();
     private final Map<String, String> albumIds = new HashMap<>();
@@ -43,6 +42,7 @@ public class MockDataService {
                     generateMockOwner(),
                     faker.bool().bool(),
                     faker.bool().bool(),
+                    0,
                     generateMockPlaylistTracks(),
                     generateMockImage()
             );
@@ -113,17 +113,7 @@ public class MockDataService {
         }
     }
 
-    private void generateMockUserCollections() {
-        for (int i = 0; i < 10; i++) {
-            UserCollection userCollection = new UserCollection(
-                    null,
-                    generateMockSavedAlbumRefs(),
-                    generateMockSavedPlaylistRefs(),
-                    generateMockCreatedPlaylistRefs()
-            );
-            userCollectionRepository.save(userCollection);
-        }
-    }
+
 
     private OwnerRef generateMockOwner() {
         String userId = faker.idNumber().valid();
@@ -168,30 +158,5 @@ public class MockDataService {
         String albumName = selectedAlbum.getValue();
 
         return new AlbumRef(albumId, albumName, generateMockImage());
-    }
-
-
-    private List<SavedAlbumRef> generateMockSavedAlbumRefs() {
-        List<SavedAlbumRef> savedAlbumRefs = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            savedAlbumRefs.add(new SavedAlbumRef(faker.idNumber().valid(), LocalDateTime.now()));
-        }
-        return savedAlbumRefs;
-    }
-
-    private List<SavedPlaylistRef> generateMockSavedPlaylistRefs() {
-        List<SavedPlaylistRef> savedPlaylistRefs = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            savedPlaylistRefs.add(new SavedPlaylistRef(faker.idNumber().valid(), LocalDateTime.now()));
-        }
-        return savedPlaylistRefs;
-    }
-
-    private List<CreatedPlaylistRef> generateMockCreatedPlaylistRefs() {
-        List<CreatedPlaylistRef> createdPlaylistRefs = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
-            createdPlaylistRefs.add(new CreatedPlaylistRef(faker.idNumber().valid(), LocalDateTime.now()));
-        }
-        return createdPlaylistRefs;
     }
 }

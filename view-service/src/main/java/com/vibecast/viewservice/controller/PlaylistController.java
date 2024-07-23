@@ -28,10 +28,10 @@ public class PlaylistController {
     public ResponseEntity<PlaylistWithTracksResponseDto> getItemFromPlaylist(@PathVariable String playlistId,
                                                                              @RequestParam int page) {
         if (page < 1) {
-            throw new RuntimeException("Page must be greater than 1");
+            throw new RuntimeException("Page must be >= 1");
         }
         int pageSize = 200;
-        return ResponseEntity.ok(playlistService.findPlaylistById(playlistId, pageSize, (page-1)*pageSize));
+        return ResponseEntity.ok(playlistService.findPlaylistById(playlistId, page, pageSize));
     }
 
     @PostMapping("/playlists/{playlistId}/tracks")
