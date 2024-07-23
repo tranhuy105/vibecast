@@ -31,6 +31,7 @@ public class Playlist {
     private OwnerRef owner;
     private boolean isPublic;
     private boolean isCollaborative;
+    private long savedCount;
     @NotNull
     private List<PlaylistTrackRef> tracks;
     private Image previewImage;

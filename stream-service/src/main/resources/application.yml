@@ -7,7 +7,10 @@ spring:
     redis:
       host: localhost
       port: 6379
-
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
 
 server:
   port: 8081
@@ -56,6 +59,17 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      defaults:
+        sliding-window-size: 10
+        permitted-number-of-calls-in-half-open-state: 2
+        failure-rate-threshold: 50
+        wait-duration-in-open-state:
+          seconds: 10
+
 
 info:
   app:

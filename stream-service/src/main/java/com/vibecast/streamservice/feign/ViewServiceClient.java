@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient("view-service")
+@FeignClient(name = "views", fallback = ViewFallBack.class)
 public interface ViewServiceClient {
     @GetMapping("/tracks/{trackId}")
     Track getTrackById(@PathVariable("trackId") String trackId);
